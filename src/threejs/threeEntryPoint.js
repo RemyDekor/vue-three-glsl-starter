@@ -1,5 +1,8 @@
 import * as THREE from "three";
 
+import vertexShader from "raw-loader!glslify-loader!./shaders/vertexShader.vert";
+import fragmentShader from "raw-loader!glslify-loader!./shaders/fragmentShader.frag";
+
 export default container => {
   const canvas = createCanvas(document, container);
 
@@ -10,11 +13,16 @@ export default container => {
 
   const renderer = buildRenderer(canvasDimensions);
   const camera = buildCamera(canvasDimensions);
-  const cubeMsh = buildCubeMesh();
+  const mesh = buildMesh();
   const scene = buildScene();
 
+  let DELTA_TIME = 0;
+  let LAST_TIME = Date.now();
+  let mstime = 0;
+  let time = 0;
+
   bindEventListeners();
-  scene.add(cubeMsh);
+  scene.add(mesh);
   update();
 
   function createCanvas(document, container) {
@@ -46,8 +54,8 @@ export default container => {
   function buildCamera({ width, height }) {
     const aspectRatio = width / height;
     const fieldOfView = 40;
-    const nearPlane = 4;
-    const farPlane = 100;
+    const nearPlane = 0.0001;
+    const farPlane = 1000;
     const camera = new THREE.PerspectiveCamera(
       fieldOfView,
       aspectRatio,
@@ -63,12 +71,18 @@ export default container => {
     return scene;
   }
 
-  function buildCubeMesh() {
-    const cubeMsh = new THREE.Mesh(
-      new THREE.BoxGeometry(1, 1, 1),
-      new THREE.MeshNormalMaterial()
+  function buildMesh() {
+    const mesh = new THREE.Mesh(
+      new THREE.IcosahedronGeometry(1, 0),
+      new THREE.ShaderMaterial({
+        uniforms: {
+          time: { type: "f", value: 0 }
+        },
+        vertexShader,
+        fragmentShader
+      })
     );
-    return cubeMsh;
+    return mesh;
   }
 
   function resizeCanvas() {
@@ -85,12 +99,21 @@ export default container => {
     renderer.setSize(width, height);
   }
 
+  function updateTime() {
+    DELTA_TIME = Date.now() - LAST_TIME;
+    LAST_TIME = Date.now();
+    mstime += DELTA_TIME;
+    time = mstime * 0.001; // convert from millis to seconds
+  }
+
   function update() {
     requestAnimationFrame(update);
-    const time = Date.now();
+    updateTime();
 
-    cubeMsh.rotation.x = time * 0.0005;
-    cubeMsh.rotation.y = time * 0.0005;
+    // mesh.rotation.x = time * 0.0005;
+    // mesh.rotation.y = time * 0.0005;
+
+    mesh.material.uniforms.time.value = time;
 
     renderer.render(scene, camera);
   }
