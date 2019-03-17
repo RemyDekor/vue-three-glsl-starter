@@ -1,4 +1,9 @@
 import * as THREE from "three";
+import EffectComposer, {
+  RenderPass,
+  ShaderPass,
+  CopyShader
+} from "three-effectcomposer-es6";
 
 import vertexShader from "raw-loader!glslify-loader!./shaders/vertexShader.vert";
 import fragmentShader from "raw-loader!glslify-loader!./shaders/fragmentShader.frag";
@@ -15,6 +20,28 @@ export default container => {
   const camera = buildCamera(canvasDimensions);
   const mesh = buildMesh();
   const scene = buildScene();
+  scene.add(mesh);
+
+  // var ambientLight = new THREE.AmbientLight(0xffffff, 0.4);
+  // scene.add(ambientLight);
+
+  const composer = new EffectComposer(renderer);
+  const renderPass = new RenderPass(scene, camera);
+  renderPass.clearColor = new THREE.Color(0, 0, 0.6);
+  renderPass.clearAlpha = 0;
+  composer.renderTarget1;
+  composer.addPass(renderPass);
+  composer.copyPass.renderToScreen = true;
+
+  // const someShaderPass = new ShaderPass(fragmentShader);
+  // composer.addPass(someShaderPass);
+  const copyPass = new ShaderPass(CopyShader);
+  copyPass.renderToScreen = true;
+  composer.addPass(copyPass);
+  console.log(composer);
+
+  composer.renderTarget1.format = THREE.RGBAFormat;
+  composer.renderTarget2.format = THREE.RGBAFormat;
 
   let DELTA_TIME = 0;
   let LAST_TIME = Date.now();
@@ -22,7 +49,6 @@ export default container => {
   let time = 0;
 
   bindEventListeners();
-  scene.add(mesh);
   update();
 
   function createCanvas(document, container) {
@@ -72,16 +98,16 @@ export default container => {
   }
 
   function buildMesh() {
-    const mesh = new THREE.Mesh(
-      new THREE.IcosahedronGeometry(1, 0),
-      new THREE.ShaderMaterial({
-        uniforms: {
-          time: { type: "f", value: 0 }
-        },
-        vertexShader,
-        fragmentShader
-      })
-    );
+    // const mat = new THREE.MeshLambertMaterial({ color: 0xff0000 });
+    const mat = new THREE.ShaderMaterial({
+      side: THREE.DoubleSide,
+      uniforms: {
+        time: { type: "f", value: 0 }
+      },
+      vertexShader,
+      fragmentShader
+    });
+    const mesh = new THREE.Mesh(new THREE.IcosahedronGeometry(1, 0), mat);
     return mesh;
   }
 
@@ -110,12 +136,13 @@ export default container => {
     requestAnimationFrame(update);
     updateTime();
 
-    // mesh.rotation.x = time * 0.0005;
-    // mesh.rotation.y = time * 0.0005;
+    mesh.rotation.x = time * 0.33;
+    mesh.rotation.y = time * 0.23;
 
     mesh.material.uniforms.time.value = time;
 
-    renderer.render(scene, camera);
+    composer.render();
+    // renderer.render(scene, camera);
   }
 
   return {

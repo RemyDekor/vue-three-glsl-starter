@@ -6,9 +6,9 @@ uniform float time;
 varying vec3 vNormal;
 
 void main() {
-    vNormal = normal;
+    vNormal = normalMatrix * position;
     
-    vec3 offs = normal * (cos(time)*.5+.5) *.3;
+    vec3 offs = normal * (cos(time)*.5+.6) *.1;
 
     // mat4 rotMatrix;
     // rotMatrix[0] = vec4(cos(time*0.1), sin(time*0.1), 0.0, 0.0);
