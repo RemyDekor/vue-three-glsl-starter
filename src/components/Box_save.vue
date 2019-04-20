@@ -3,8 +3,6 @@
 /* eslint-disable vue/no-side-effects-in-computed-properties */
 /* eslint-disable vue/require-render-return */
 
-// Note how there's no template or styles in this component.
-
 // Helper functions to convert a percentage of canvas area to pixels.
 const percentWidthToPix = (percent, ctx) =>
     Math.floor((ctx.canvas.width / 100) * percent);

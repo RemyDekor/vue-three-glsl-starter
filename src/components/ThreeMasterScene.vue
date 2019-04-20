@@ -10,13 +10,11 @@ import * as THREE from "three";
 export default {
     name: "ThreeMasterScene",
     props: {},
-    data() {
-        return {
-            renderer: null,
-            camera: null,
-            scene: null
-        };
-    },
+    data: () => ({
+        renderer: null,
+        camera: null,
+        scene: null
+    }),
     mounted() {
         this.$data.renderer = this.buildRenderer(this.$refs.canvasEl);
         this.$data.camera = this.buildCamera(this.$refs.canvasEl);
