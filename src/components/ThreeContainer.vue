@@ -1,16 +1,6 @@
 <template>
     <ThreeWrapper class="threeWrapper">
-        <!-- <Box
-            v-for="(obj, index) of chartValues"
-            :key="index"
-            :x1="((index / chartValues.length) * 100)"
-            :x2="((index / chartValues.length) * 100) + (100 / chartValues.length)"
-            :y1="100"
-            :y2="100 - obj.val"
-            :color="obj.color"
-            :value="obj.val"
-        ></Box>-->
-        <Box :pos="boxPos"/>
+        <Box v-for="(pos, index) of boxPositions" :key="index" :pos="pos" :color="0xFFFFFF"/>
     </ThreeWrapper>
 </template>
 
@@ -28,7 +18,11 @@ export default {
     },
     props: {},
     data: () => ({
-        boxPos: THREE.Vector3(0, 2, 0)
+        boxPositions: [
+            { x: -1, y: 0.5, z: 0 },
+            { x: 0, y: 0, z: -2 },
+            { x: 1, y: 0.5, z: 0 }
+        ]
     }),
     mounted() {}
 };

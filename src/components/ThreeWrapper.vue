@@ -12,7 +12,8 @@ export default {
     data: () => ({
         renderer: null,
         camera: null,
-        globalScene: null
+        globalScene: null,
+        timer: 0
     }),
     provide() {
         // NOTE: This is a small boilerplate code to keep the stuff provided REACTIVE
@@ -20,6 +21,10 @@ export default {
         Object.defineProperty(provider, "globalScene", {
             enumerable: true,
             get: () => this.globalScene
+        });
+        Object.defineProperty(provider, "time", {
+            enumerable: true,
+            get: () => this.timer
         });
         return { provider };
     },
@@ -37,7 +42,6 @@ export default {
     beforeDestroy() {},
     methods: {
         bindEventListeners() {
-            console.log("binding stuff");
             window.onresize = this.resizeCanvas;
             this.resizeCanvas();
         },
@@ -73,6 +77,10 @@ export default {
         },
         buildScene() {
             const scene = new THREE.Scene();
+            const childrenObject3DArr = this.$slots.default.map(
+                slotChildVNode => slotChildVNode.componentInstance.build()
+            );
+            scene.add(...childrenObject3DArr);
             return scene;
         },
         resizeCanvas() {
@@ -89,6 +97,13 @@ export default {
         },
         update() {
             requestAnimationFrame(this.update);
+            this.timer++;
+
+            this.$slots.default.map(slotChildVNode => {
+                if (slotChildVNode.componentInstance.update) {
+                    slotChildVNode.componentInstance.update();
+                }
+            });
 
             this.renderer.render(this.globalScene, this.camera);
         }
