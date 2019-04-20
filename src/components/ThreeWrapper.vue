@@ -29,8 +29,6 @@ export default {
         return { provider };
     },
     mounted() {
-        // this.provider.context = this.$refs["canvasEl"].getContext("2d");
-
         this.renderer = this.buildRenderer(this.$refs.canvasEl);
         this.camera = this.buildCamera(this.$refs.canvasEl);
         this.globalScene = this.buildScene();
@@ -39,7 +37,9 @@ export default {
 
         this.update();
     },
-    beforeDestroy() {},
+    beforeDestroy() {
+        this.update = () => {}; // clean up loop function
+    },
     methods: {
         bindEventListeners() {
             window.onresize = this.resizeCanvas;

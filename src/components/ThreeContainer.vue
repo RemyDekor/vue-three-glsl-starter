@@ -1,11 +1,14 @@
 <template>
-    <ThreeWrapper class="threeWrapper">
-        <Box v-for="(pos, index) of boxPositions" :key="index" :pos="pos" :color="0xFFFFFF"/>
-    </ThreeWrapper>
+    <div>
+        <ThreeWrapper class="threeWrapper">
+            <Box v-for="(pos, index) of boxPositions" :key="index" :pos="pos" :color="0xFFFFFF"/>
+        </ThreeWrapper>
+        <button @click="emitEvent">BUTTTOOOON</button>
+    </div>
 </template>
 
 <script>
-import * as THREE from "three";
+import { bus } from "../EventBus.js";
 import ThreeWrapper from "./ThreeWrapper.vue";
 import Box from "./Box.vue";
 
@@ -24,7 +27,12 @@ export default {
             { x: 1, y: 0.5, z: 0 }
         ]
     }),
-    mounted() {}
+    mounted() {},
+    methods: {
+        emitEvent() {
+            bus.$emit("emit-event");
+        }
+    }
 };
 </script>
 

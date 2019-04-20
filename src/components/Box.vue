@@ -3,6 +3,7 @@
 /* eslint-disable vue/no-side-effects-in-computed-properties */
 /* eslint-disable vue/require-render-return */
 
+import { bus } from "../EventBus.js";
 import * as THREE from "three";
 
 export default {
@@ -55,12 +56,16 @@ export default {
     //     }
     // },
 
-    mounted() {},
+    created() {
+        // maybe instead of using a bus we would want to expose the function in the parent (so the parent can trigger it)
+        bus.$on("emit-event", this.scaleDown);
+    },
 
     methods: {
         build() {
             // if (!this.provider.globalScene) return null;
             // const scene = this.provider.globalScene;
+
             const geometry = new THREE.BoxGeometry(1, 1, 1);
             const material = new THREE.MeshBasicMaterial({
                 color: this.$props.color
@@ -74,6 +79,10 @@ export default {
             );
             return this.mesh;
             // scene.add(this.mesh);
+        },
+        scaleDown() {
+            console.log("scaling down");
+            this.mesh.scale.multiplyScalar(0.9);
         },
         update() {
             if (this.mesh) {
