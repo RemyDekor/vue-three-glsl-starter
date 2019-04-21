@@ -13,20 +13,21 @@ export default {
         renderer: null,
         camera: null,
         globalScene: null,
-        timer: 0
+        time: 0
     }),
     provide() {
         // NOTE: This is a small boilerplate code to keep the stuff provided REACTIVE
-        const provider = {};
-        Object.defineProperty(provider, "globalScene", {
+        const globalSceneState = {};
+        // Object.defineProperty(globalSceneState, "globalScene", {
+        //     enumerable: true,
+        //     get: () => this.globalScene
+        // });
+        Object.defineProperty(globalSceneState, "time", {
             enumerable: true,
-            get: () => this.globalScene
+            get: () => this.time
         });
-        Object.defineProperty(provider, "time", {
-            enumerable: true,
-            get: () => this.timer
-        });
-        return { provider };
+
+        return { globalSceneState };
     },
     mounted() {
         this.renderer = this.buildRenderer(this.$refs.canvasEl);
@@ -97,7 +98,7 @@ export default {
         },
         update() {
             requestAnimationFrame(this.update);
-            this.timer++;
+            this.time++;
 
             this.$slots.default.map(slotChildVNode => {
                 if (slotChildVNode.componentInstance.update) {

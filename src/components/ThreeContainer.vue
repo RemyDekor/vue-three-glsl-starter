@@ -1,7 +1,7 @@
 <template>
     <div>
         <ThreeWrapper class="threeWrapper">
-            <Box v-for="(pos, index) of boxPositions" :key="index" :pos="pos" :color="0xFFFFFF"/>
+            <Box :pos="boxPositions[0]" :color="0xFFFFFF"/>
         </ThreeWrapper>
         <button @click="emitEvent">BUTTTOOOON</button>
     </div>
@@ -10,7 +10,7 @@
 <script>
 import { bus } from "../EventBus.js";
 import ThreeWrapper from "./ThreeWrapper.vue";
-import Box from "./Box.vue";
+import Box from "./Box.js";
 
 export default {
     name: "ThreeContainer",
